@@ -3,7 +3,11 @@ class BeersController < ApplicationController
 
   # GET /beers
   def index
-    @beers = Beer.all
+    @beers =
+      Rails.cache.fetch('beers', expires_in: 5.minutes) do
+        Rails.logger.info('> No cache found, executing query.')
+        Beer.all.load
+      end
 
     render json: @beers
   end
