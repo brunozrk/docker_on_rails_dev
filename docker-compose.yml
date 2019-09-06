@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - mysql_data:/var/lib/data
+  redis:
+    image: redis:5.0.5
+    ports:
+      - "6379:6379"
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+      - bundler:/usr/local/bundle/
+    ports:
+      - "3000:3000"
+    links:
+      - redis
+      - mysql
+
+volumes:
+  mysql_data:
+  bundler:
